@@ -1,0 +1,74 @@
+#!/bin/bash
+
+is_X_running () {
+    pgrep -f ${XORG} > /dev/null
+    XORG_RUNNING=$?
+}
+
+is_running () {
+    systemctl is-active kodi.service
+    KODI_RUNNING=$?
+}
+
+do_stop () {
+    echo "stopping kodi service"
+    systemctl stop kodi.service
+
+    systemctl stop kodi.service
+}
+
+do_restart () {
+    is_X_running
+
+    if [[ XORG_RUNNING -eq 0 ]] ; then
+        echo "X is running, will not start Kodi"
+        exit 1
+    else
+        echo "starting kodi service"
+        systemctl restart kodi.service
+    fi
+}
+
+do_toggle () {
+    if [[ KODI_RUNNING -eq 0 ]] ; then
+        do_stop
+
+    else
+        do_restart
+    fi
+}
+
+check_argument () {
+    if [[ -z "${ARG}" ]] ; then
+        echo "no argument supplied"
+        exit 1
+    fi
+}
+
+# **************start************************
+XORG="/usr/bin/X"
+ARG="${1}"
+
+echo "running ${0}, with argument [${ARG}]"
+
+check_argument
+
+is_running
+
+case "$ARG" in
+    stop)
+        do_stop
+    ;;
+    restart)
+        do_restart
+    ;;
+    toggle)
+        do_toggle
+    ;;
+    *)
+        echo "Usage: $0 {stop|restart|toggle}"
+        exit 1
+    ;;
+esac
+
+exit 0

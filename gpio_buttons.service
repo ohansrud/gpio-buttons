@@ -1,0 +1,10 @@
+[Unit]
+Description=gpio_buttons
+
+[Service]
+StandardOutput=syslog
+StandardError=syslog
+ExecStart=/usr/local/sbin/gpio_buttons.py
+
+[Install]
+WantedBy=multi-user.target
