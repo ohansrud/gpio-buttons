@@ -1,8 +1,17 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 import RPi.GPIO as GPIO
 import os
 from time   import sleep
 from timeit import default_timer as timer
+import logging
+LOG = "/var/log/MPD.FM.log"
+
+logging.basicConfig(filename=LOG, filemode="w", level=logging.DEBUG)
+
+# console handler
+console = logging.StreamHandler()
+console.setLevel(logging.ERROR)
+logging.getLogger("").addHandler(console)
 
 print('Starting ' + __file__ )
 
@@ -16,7 +25,7 @@ try:
 
     GPIO.setmode(GPIO.BCM)
 
-    GPIO.setup(CH_RESET,   GPIO.IN)
+    GPIO.setup(CH_RESET,   GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(CH_BUTTON1, GPIO.IN)
     GPIO.setup(CH_BUTTON2, GPIO.IN)
 
@@ -42,12 +51,19 @@ try:
         elapsed = button_duration(channel)
 
         if elapsed < BTN_PRESS_LONG:
+            logging.debug('short press')
             print('reboot')
-            os.system("reboot")
+            try:
+                os.system("mpc next")
+                logging.debug('Switched to next station')
+                os.system("mpc play")
+            except:
+                logging.error('Error')
 
         elif elapsed >= BTN_PRESS_LONG:
-            print('poweroff')
-            os.system("poweroff")
+            logging.debug('long press')
+            #print('poweroff')
+            os.system("reboot")
 
         else:
             print('ERROR elapsed=[%s]'% elasped)
