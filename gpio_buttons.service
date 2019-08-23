@@ -1,10 +1,12 @@
 [Unit]
-Description=gpio_buttons
+Description=GPIO Buttons Service
+After=multi-user.target
+Conflicts=getty@tty1.service
 
 [Service]
-StandardOutput=syslog
-StandardError=syslog
+Type=simple
 ExecStart=/usr/local/sbin/gpio_buttons.py
+StandardInput=tty-force
 
 [Install]
 WantedBy=multi-user.target
