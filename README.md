@@ -17,6 +17,6 @@ Set chmod +x and chmod to root
 Copy gpio-buttons.service to /etc/systemd/system/
 
         $ sudo systemctl daemon-reload
-        $ sudo systemctl enable gpio-buttons.service //Set autostart on boot
-        $ sudo systemctl start gpio-buttons.service
-        $ sudo systemctl status gpio-buttons.service //Check that service runs
+        $ sudo systemctl enable gpio_buttons.service //Set autostart on boot
+        $ sudo systemctl start gpio_buttons.service
+        $ sudo systemctl status gpio_buttons.service //Check that service runs
